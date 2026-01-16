@@ -1,7 +1,7 @@
 :root {
   --bg: #c7d4df;
-  --card: #ffffff;
-  --text: #0f172a;
+  --card: #d2b48c;
+  --text: #000000;
   --muted: #64748b;
   --line: #e5e7eb;
   --brand: #2563eb;
@@ -109,7 +109,7 @@ a:hover {
   width: 34px;
   height: 34px;
   border-radius: 12px;
-  background: rgba(37, 99, 235, 0.12);
+  background: rgba(17, 102, 31, 0.12);
   display: grid;
   place-items: center;
   color: var(--brand);
