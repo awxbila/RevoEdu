@@ -23,7 +23,7 @@ export default function UserMenu() {
         onClick={() => setOpen((v) => !v)}
         type="button"
       >
-        {name} ▾
+        I&apos;m {name} ▾
       </button>
 
       {open && (

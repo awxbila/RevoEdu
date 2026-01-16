@@ -30,11 +30,22 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="brand">
-        <div className="brand-badge">L</div>
         <div>
-          LMS
-          <div className="muted" style={{ fontSize: 12, fontWeight: 600 }}>
-            {role === "LECTURER" ? "Lecturer Panel" : "Student Panel"}
+          <span style={{ color: "#041b4e", fontWeight: 800, fontSize: 30 }}>
+            Revo
+          </span>
+          <span style={{ color: "#d6a96d", fontWeight: 800, fontSize: 30 }}>
+            Edu
+          </span>
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              color: "#9ca3af",
+              fontFamily: "Arial, sans-serif",
+            }}
+          >
+            Revo LMS Portal
           </div>
         </div>
       </div>

@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type CSSProperties, type FormEvent } from "react";
 import { apiFetch } from "@/lib/api";
 import { setToken } from "@/lib/auth";
+import "./login.module.css";
 
 type LoginResponse = { access_token: string };
 
@@ -14,28 +15,36 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [showLogin, setShowLogin] = useState(true);
-  const backgroundImage = "url('/login-bg.jpg')"; // let user drop their own image into /public/login-bg.jpg
-  const backgroundStyle: React.CSSProperties = {
+
+  // Register form states
+  const [regName, setRegName] = useState("");
+  const [regEmail, setRegEmail] = useState("");
+  const [regPassword, setRegPassword] = useState("");
+  const [regRole, setRegRole] = useState("");
+
+  const backgroundImage = "url('/login-bg.png')"; // place your image at /public/login-bg.png
+  const backgroundStyle: CSSProperties = {
     minHeight: "100vh",
     backgroundImage: `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), ${backgroundImage}`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     padding: 24,
-  };
-  const cardStyle: React.CSSProperties = {
-    width: "100%",
-    maxWidth: 420,
-    background: "rgba(255,255,255,0.92)",
-    borderRadius: 12,
-    padding: 24,
-    boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
-    backdropFilter: "blur(6px)",
+    paddingRight: 48,
   };
 
-  async function onSubmit(e: React.FormEvent) {
+  const cardStyle: CSSProperties = {
+    width: "100%",
+    maxWidth: 420,
+    background: "transparent",
+    borderRadius: 12,
+    padding: 24,
+    color: "#fff",
+  };
+
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -66,7 +75,157 @@ export default function LoginPage() {
     return (
       <div style={backgroundStyle}>
         <main style={cardStyle}>
-          <div style={{ textAlign: "center", marginBottom: 24 }}>
+          <h1
+            style={{
+              fontSize: 30,
+              fontWeight: 700,
+              marginBottom: 24,
+              color: "#164d8d",
+            }}
+          >
+            Register
+          </h1>
+
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setError("");
+              setLoading(true);
+              try {
+                await apiFetch("/api/auth/register", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    name: regName,
+                    email: regEmail,
+                    password: regPassword,
+                    role: regRole,
+                  }),
+                });
+                alert("Registrasi berhasil! Silakan login.");
+                setShowLogin(true);
+                setRegName("");
+                setRegEmail("");
+                setRegPassword("");
+                setRegRole("student");
+              } catch (err: any) {
+                setError(err?.message || "Registrasi gagal");
+              } finally {
+                setLoading(false);
+              }
+            }}
+            style={{ display: "grid", gap: 10 }}
+          >
+            <label style={{ color: "#fff" }}>
+              Nama
+              <input
+                value={regName}
+                onChange={(e) => setRegName(e.target.value)}
+                type="text"
+                required
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  marginTop: 6,
+                  boxSizing: "border-box",
+                  border: "none",
+                  borderRadius: 4,
+                  background: "#D2B48C",
+                  color: "#fff",
+                }}
+              />
+            </label>
+
+            <label style={{ color: "#fff" }}>
+              Email
+              <input
+                value={regEmail}
+                onChange={(e) => setRegEmail(e.target.value)}
+                type="email"
+                required
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  marginTop: 6,
+                  boxSizing: "border-box",
+                  border: "none",
+                  borderRadius: 4,
+                  background: "#D2B48C",
+                  color: "#fff",
+                }}
+              />
+            </label>
+
+            <label style={{ color: "#fff" }}>
+              Password
+              <input
+                value={regPassword}
+                onChange={(e) => setRegPassword(e.target.value)}
+                type="password"
+                required
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  marginTop: 6,
+                  boxSizing: "border-box",
+                  border: "none",
+                  borderRadius: 4,
+                  background: "#D2B48C",
+                  color: "#fff",
+                }}
+              />
+            </label>
+
+            <label style={{ color: "#fff" }}>
+              Role
+              <select
+                value={regRole}
+                onChange={(e) => setRegRole(e.target.value)}
+                required
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  marginTop: 6,
+                  boxSizing: "border-box",
+                  border: "none",
+                  borderRadius: 4,
+                  background: "#D2B48C",
+                  color: "#fff",
+                }}
+              >
+                <option value="">Pilih Role</option>
+                <option value="STUDENT">Student</option>
+                <option value="LECTURER">Lecturer</option>
+              </select>
+            </label>
+
+            {error && (
+              <p
+                style={{ color: "crimson", margin: "10px 0 0 0", fontSize: 14 }}
+              >
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                padding: 12,
+                fontWeight: 700,
+                marginTop: 8,
+                background: "#1e4e85",
+                color: "white",
+                border: "none",
+                borderRadius: 4,
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.6 : 1,
+              }}
+            >
+              {loading ? "Loading..." : "Register"}
+            </button>
+          </form>
+
+          <div style={{ marginTop: 24, textAlign: "right" }}>
             <button
               onClick={() => setShowLogin(true)}
               style={{
@@ -74,20 +233,13 @@ export default function LoginPage() {
                 border: "none",
                 cursor: "pointer",
                 fontSize: 14,
-                color: "#0070f3",
+                color: "#fff",
                 textDecoration: "underline",
               }}
             >
-              ← Kembali
+              Kembali
             </button>
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 24 }}>
-            Daftar Akun Baru
-          </h1>
-          <p style={{ marginBottom: 24, color: "#666" }}>
-            Fitur registrasi akan segera hadir. Silakan hubungi administrator
-            untuk membuat akun.
-          </p>
         </main>
       </div>
     );
@@ -96,10 +248,19 @@ export default function LoginPage() {
   return (
     <div style={backgroundStyle}>
       <main style={cardStyle}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 24 }}>Login</h1>
+        <h1
+          style={{
+            fontSize: 30,
+            fontWeight: 700,
+            marginBottom: 24,
+            color: "#164d8d",
+          }}
+        >
+          Login
+        </h1>
 
         <form onSubmit={onSubmit} style={{ display: "grid", gap: 10 }}>
-          <label>
+          <label style={{ color: "#fff" }}>
             Email
             <input
               value={email}
@@ -111,11 +272,15 @@ export default function LoginPage() {
                 padding: 10,
                 marginTop: 6,
                 boxSizing: "border-box",
+                border: "none",
+                borderRadius: 4,
+                background: "#D2B48C",
+                color: "#fff",
               }}
             />
           </label>
 
-          <label>
+          <label style={{ color: "#fff" }}>
             Password
             <input
               value={password}
@@ -127,6 +292,10 @@ export default function LoginPage() {
                 padding: 10,
                 marginTop: 6,
                 boxSizing: "border-box",
+                border: "none",
+                borderRadius: 4,
+                background: "#D2B48C",
+                color: "#fff",
               }}
             />
           </label>
@@ -144,7 +313,7 @@ export default function LoginPage() {
               padding: 12,
               fontWeight: 700,
               marginTop: 8,
-              background: "#0070f3",
+              background: "#1e4e85",
               color: "white",
               border: "none",
               borderRadius: 4,
@@ -157,18 +326,22 @@ export default function LoginPage() {
         </form>
 
         <div
-          style={{ marginTop: 24, paddingTop: 24, borderTop: "1px solid #eee" }}
+          style={{
+            marginTop: 24,
+            paddingTop: 24,
+            borderTop: "1px solid #eee",
+          }}
         >
-          <p style={{ marginBottom: 12, color: "#666" }}>Belum punya akun?</p>
+          <p style={{ marginBottom: 12, color: "#fff" }}>Belum punya akun?</p>
           <button
             onClick={() => setShowLogin(false)}
             style={{
               width: "100%",
               padding: 12,
               fontWeight: 700,
-              background: "white",
-              color: "#0070f3",
-              border: "2px solid #0070f3",
+              background: "#1e4e85",
+              color: "white",
+              border: "none",
               borderRadius: 4,
               cursor: "pointer",
             }}
@@ -176,17 +349,6 @@ export default function LoginPage() {
             Register
           </button>
         </div>
-
-        <p
-          style={{
-            marginTop: 20,
-            fontSize: 12,
-            opacity: 0.8,
-            textAlign: "center",
-          }}
-        >
-          Demo: lecturer@example.com / password123
-        </p>
       </main>
     </div>
   );
