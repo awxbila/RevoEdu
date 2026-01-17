@@ -21,17 +21,17 @@ export default function Sidebar() {
         ]
       : [
           { href: "/dashboard/student", label: "Beranda" },
-          { href: "/dashboard/student/tasks", label: "Rekap Tugas" },
-          { href: "/dashboard/student/submit", label: "Upload/Submit" },
-          { href: "/dashboard/student/courses", label: "Semua Courses" },
-          { href: "/dashboard/student/activity", label: "Aktivitas" },
+          { href: "/dashboard/student/tasks", label: "Assignment" },
+          { href: "/dashboard/student/submit", label: "Submit Assignment" },
+          { href: "/dashboard/student/courses", label: "Course Info" },
+          { href: "/dashboard/student/activity", label: "Study Activity" },
         ];
 
   return (
     <aside className="sidebar">
       <div className="brand">
         <div>
-          <span style={{ color: "#041b4e", fontWeight: 800, fontSize: 30 }}>
+          <span style={{ color: "#1f2d6b", fontWeight: 800, fontSize: 30 }}>
             Revo
           </span>
           <span style={{ color: "#d6a96d", fontWeight: 800, fontSize: 30 }}>

@@ -7,8 +7,8 @@ import { getTokenClient } from "@/lib/auth";
 
 export default function SubmitTask() {
   const token = getTokenClient();
-  const [assignmentId, setAssignmentId] = useState<number | "">("");
-  const [content, setContent] = useState("");
+  const [assignmentId, setAssignmentId] = useState<string>("");
+  const [linkSubmission, setLinkSubmission] = useState("");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -16,33 +16,48 @@ export default function SubmitTask() {
       "/api/submissions",
       {
         method: "POST",
-        body: JSON.stringify({ assignmentId, content }),
+        body: JSON.stringify({ assignmentId, linkSubmission }),
       },
       token
     );
     alert("Terkirim");
     setAssignmentId("");
-    setContent("");
+    setLinkSubmission("");
   }
 
   return (
     <AppShell>
-      <h1>Submit Tugas</h1>
-      <form onSubmit={submit}>
-        <input
-          placeholder="Assignment ID"
-          value={assignmentId}
-          onChange={(e) => setAssignmentId(Number(e.target.value))}
-          required
-        />
-        <textarea
-          placeholder="Isi submission"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          required
-        />
-        <button type="submit">Kirim</button>
-      </form>
+      <h1 className="submit-assignment-title">Submit Assignment</h1>
+      <div className="submit-card">
+        <form onSubmit={submit} className="submit-form">
+          <div className="form-group">
+            <label className="form-label">Assignment ID</label>
+            <input
+              className="form-input"
+              type="text"
+              value={assignmentId}
+              onChange={(e) => setAssignmentId(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Link Submission</label>
+            <input
+              className="form-input"
+              type="url"
+              placeholder="https://..."
+              value={linkSubmission}
+              onChange={(e) => setLinkSubmission(e.target.value)}
+              required
+            />
+          </div>
+
+          <button type="submit" className="submit-btn">
+            Submit
+          </button>
+        </form>
+      </div>
     </AppShell>
   );
 }

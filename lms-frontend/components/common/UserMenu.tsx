@@ -1,15 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { decodeJwtPayload } from "@/lib/jwt";
 import { getTokenClient } from "@/lib/auth";
 
 export default function UserMenu() {
   const [open, setOpen] = useState(false);
-  const token = getTokenClient();
-  const user = decodeJwtPayload(token || "");
-  const name = user?.name || user?.email || "User";
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    const token = getTokenClient();
+    const user = decodeJwtPayload(token || "");
+    const resolvedName = user?.name || user?.email || "User";
+    setName(resolvedName);
+  }, []);
 
   return (
     <div style={{ position: "relative" }}>

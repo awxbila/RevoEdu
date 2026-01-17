@@ -1,6 +1,6 @@
 :root {
-  --bg: #c7d4df;
-  --card: #d2b48c;
+  --bg: #d9dde4;
+  --card: #f5d7b0;
   --text: #000000;
   --muted: #64748b;
   --line: #e5e7eb;
@@ -160,11 +160,419 @@ a:hover {
   gap: 16px;
 }
 
+/* Study Activity Styles */
+.study-activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.study-activity-title {
+  font-size: 25px;
+  font-weight: 700;
+  margin: 0;
+  color: #183077;
+  font-family: Arial, sans-serif;
+}
+
+.assignment-title {
+  font-size: 25px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: #183077;
+  font-family: Arial, sans-serif;
+}
+
+.assignment-empty {
+  padding: 24px;
+  text-align: center;
+  color: #4b5563;
+  background: white;
+  border-radius: 14px;
+  border: 1px dashed #d1d5db;
+}
+
+.assignment-card {
+  background: #ffffff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
+}
+
+.assignment-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+}
+
+.assignment-table th,
+.assignment-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #1e3a8a;
+}
+
+.assignment-table th {
+  background: rgba(37, 99, 235, 0.08);
+  font-weight: 700;
+  color: var(--text);
+  border-bottom: 2px solid #1e3a8a;
+  font-size: 13px;
+}
+
+.assignment-table tbody tr:hover {
+  background: rgba(37, 99, 235, 0.04);
+}
+
+.submit-assignment-title {
+  font-size: 25px;
+  font-weight: 700;
+  margin: 0 0 40px 0;
+  color: #183077;
+  font-family: Arial, sans-serif;
+}
+
+.submit-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.submit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.form-input {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: rgba(37, 99, 235, 0.35);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.submit-btn {
+  padding: 10px 16px;
+  background: var(--brand);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  background: var(--brand-2);
+}
+
+.add-course-btn {
+  width: 44px;
+  height: 44px;
+  background: var(--brand);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.add-course-btn:hover {
+  background: var(--brand-2);
+}
+
+.study-activity-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+}
+
+.study-activity-card {
+  background: #ffffff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
+}
+
+.study-activity-table th,
+.study-activity-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #1e3a8a;
+}
+
+.study-activity-table th {
+  background: rgba(37, 99, 235, 0.08);
+  font-weight: 700;
+  color: var(--text);
+  border-bottom: 2px solid #1e3a8a;
+  font-size: 13px;
+}
+
+.study-activity-table tbody tr:hover {
+  background: rgba(37, 99, 235, 0.04);
+}
+
+.semester-select {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.lecturer-link {
+  background: none;
+  border: none;
+  color: var(--brand);
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0;
+}
+
+.lecturer-link:hover {
+  color: var(--brand-2);
+}
+
+.status-badge {
+  background: #10b981;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h2 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.lecturer-profile {
+  background: var(--bg);
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.lecturer-profile p {
+  margin: 8px 0;
+  font-size: 15px;
+}
+
+.btn-secondary {
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+}
+
+.course-info-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.course-info-head h1 {
+  color: #183077;
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+}
+
+.course-info-sub {
+  margin: 4px 0 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.course-search {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.course-search-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.course-search-input:focus {
+  outline: 2px solid rgba(37, 99, 235, 0.35);
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+.course-error {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  font-weight: 600;
+}
+
+.course-empty {
+  padding: 24px;
+  text-align: center;
+  color: #4b5563;
+  background: white;
+  border-radius: 14px;
+  border: 1px dashed #d1d5db;
+}
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.course-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.course-cover {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.course-cover-initial {
+  font-size: 40px;
+  font-weight: 800;
+  text-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.course-card-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.course-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.course-lecturer {
+  font-size: 13px;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.course-enroll-btn {
+  margin-top: 6px;
+  background: var(--brand);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.course-enroll-btn:hover {
+  background: var(--brand-2);
+}
+
 @media (max-width: 900px) {
   .sidebar {
     display: none;
   }
   .grid {
     grid-template-columns: 1fr;
+  }
+  .study-activity-table {
+    font-size: 13px;
+  }
+  .study-activity-table th,
+  .study-activity-table td {
+    padding: 8px 6px;
   }
 }
