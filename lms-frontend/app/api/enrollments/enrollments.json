@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "studentId": 3,
+    "courseId": 101,
+    "semester": "ganjil",
+    "status": "Aktif",
+    "enrolledAt": "2025-01-01"
+  },
+  {
+    "id": 2,
+    "studentId": 3,
+    "courseId": 102,
+    "semester": "ganjil",
+    "status": "Aktif",
+    "enrolledAt": "2025-01-01"
+  },
+  {
+    "id": 3,
+    "studentId": 4,
+    "courseId": 101,
+    "semester": "ganjil",
+    "status": "Aktif",
+    "enrolledAt": "2026-01-26"
+  },
+  {
+    "id": 4,
+    "studentId": 4,
+    "courseId": 102,
+    "semester": "genap",
+    "status": "Aktif",
+    "enrolledAt": "2026-01-26"
+  },
+  {
+    "id": 5,
+    "studentId": 4,
+    "courseId": 103,
+    "semester": "genap",
+    "status": "Aktif",
+    "enrolledAt": "2026-01-26"
+  }
+]

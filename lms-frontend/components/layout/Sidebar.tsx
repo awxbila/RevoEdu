@@ -4,20 +4,30 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { decodeJwtPayload } from "@/lib/jwt";
 import { getTokenClient } from "@/lib/auth";
+import { useEffect, useState } from "react";
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const token = getTokenClient();
-  const role = decodeJwtPayload(token || "")?.role;
+  const [role, setRole] = useState<string | null>(null);
+  useEffect(() => {
+    const token = getTokenClient();
+    setRole(decodeJwtPayload(token || "")?.role || null);
+  }, []);
+
+  if (!role) {
+    // Prevent SSR/CSR mismatch by not rendering menu until role is known
+    return null;
+  }
 
   const menus =
     role === "LECTURER"
       ? [
           { href: "/dashboard/lecturer", label: "Beranda" },
           { href: "/dashboard/lecturer/courses", label: "Push Courses" },
-          { href: "/dashboard/lecturer/activity", label: "Aktivitas" },
-          { href: "/dashboard/lecturer/assignments", label: "Memberi Tugas" },
+          { href: "/dashboard/lecturer/activity", label: "Lecturer Activity" },
+          { href: "/dashboard/lecturer/assignments", label: "Push Assignment" },
           { href: "/dashboard/lecturer/submissions", label: "Submission" },
+          { href: "/dashboard/lecturer/quizzes", label: "Quiz" },
         ]
       : [
           { href: "/dashboard/student", label: "Beranda" },
@@ -25,6 +35,7 @@ export default function Sidebar() {
           { href: "/dashboard/student/submit", label: "Submit Assignment" },
           { href: "/dashboard/student/courses", label: "Course Info" },
           { href: "/dashboard/student/activity", label: "Study Activity" },
+          { href: "/dashboard/student/quizzes", label: "Quiz" },
         ];
 
   return (

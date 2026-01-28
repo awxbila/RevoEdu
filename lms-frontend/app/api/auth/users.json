@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "Dr. Budi Santoso",
+    "email": "budi@example.com",
+    "password": "password123",
+    "role": "LECTURER"
+  },
+  {
+    "id": 2,
+    "name": "Prof. Adi Wijaya",
+    "email": "adi@example.com",
+    "password": "password123",
+    "role": "LECTURER"
+  },
+  {
+    "id": 3,
+    "name": "Student One",
+    "email": "student@example.com",
+    "password": "password123",
+    "role": "STUDENT"
+  },
+  {
+    "id": 4,
+    "name": "bilala",
+    "email": "bilala@gmail.com",
+    "password": "bilalacantik",
+    "role": "STUDENT"
+  }
+]

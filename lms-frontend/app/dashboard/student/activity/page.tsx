@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 import { apiFetch } from "@/lib/api";
 import { getTokenClient } from "@/lib/auth";
 
 type Enrollment = {
   id: number;
-  semester: string;
+  // semester: string; // dihapus, tidak dipakai lagi
   course: {
     id: number;
     title: string;
@@ -28,19 +29,36 @@ export default function StudentActivity() {
   const [showLecturerModal, setShowLecturerModal] = useState(false);
   const [selectedLecturer, setSelectedLecturer] = useState<any>(null);
   const [selectedCourse, setSelectedCourse] = useState("");
-  const [selectedSemester, setSelectedSemester] = useState("ganjil");
+  // const [selectedSemester, setSelectedSemester] = useState("ganjil"); // dihapus
   const token = getTokenClient();
+  const router = useRouter();
 
   useEffect(() => {
-    // Fetch enrollments
-    apiFetch<any[]>("/api/enrollments/me", {}, token)
-      .then((data) => setEnrollments(data || []))
-      .catch(() => setEnrollments([]));
+    let mounted = true;
+    async function loadData() {
+      try {
+        // Fetch enrollments
+        const enrollData = await apiFetch<any[]>(
+          "/api/enrollments/me",
+          {},
+          token,
+        );
+        if (mounted) setEnrollments(enrollData || []);
 
-    // Fetch all available courses
-    apiFetch<any[]>("/api/courses", {}, token)
-      .then((data) => setAllCourses(data || []))
-      .catch(() => setAllCourses([]));
+        // Fetch all available courses
+        const courseData = await apiFetch<any[]>("/api/courses", {}, token);
+        if (mounted) setAllCourses(courseData || []);
+      } catch (err) {
+        if (mounted) {
+          setEnrollments([]);
+          setAllCourses([]);
+        }
+      }
+    }
+    loadData();
+    return () => {
+      mounted = false;
+    };
   }, [token]);
 
   const handleAddCourse = async () => {
@@ -54,42 +72,40 @@ export default function StudentActivity() {
             courseId: selectedCourse,
           }),
         },
-        token
+        token,
       );
       // Refresh enrollments
       const updated = await apiFetch<any[]>("/api/enrollments/me", {}, token);
       setEnrollments(updated || []);
       setShowAddModal(false);
       setSelectedCourse("");
-      setSelectedSemester("ganjil");
+      // setSelectedSemester("ganjil"); // dihapus
     } catch (err: any) {
       alert(err?.message || "Gagal menambahkan course");
     }
   };
 
-  const handleSemesterChange = async (
-    enrollmentId: number,
-    newSemester: string
-  ) => {
-    try {
-      await apiFetch(
-        `/api/enrollments/${enrollmentId}`,
-        {
-          method: "PATCH",
-          body: JSON.stringify({ semester: newSemester }),
-        },
-        token
-      );
-      // Update local state
-      setEnrollments((prev) =>
-        prev.map((e) =>
-          e.id === enrollmentId ? { ...e, semester: newSemester } : e
-        )
-      );
-    } catch (err: any) {
-      alert(err?.message || "Gagal update semester");
+  // const handleSemesterChange = ... // dihapus, tidak dipakai lagi
+
+  // Helper to fetch lecturer detail if only id is present
+  async function handleLecturerClick(lecturer: any) {
+    if (lecturer && lecturer.id && (!lecturer.email || !lecturer.phone)) {
+      try {
+        // Update endpoint here to match backend
+        const detail = await apiFetch(
+          `/api/users/lecturer/${lecturer.id}`,
+          {},
+          token,
+        );
+        setSelectedLecturer(detail);
+      } catch {
+        setSelectedLecturer(lecturer); // fallback
+      }
+    } else {
+      setSelectedLecturer(lecturer);
     }
-  };
+    setShowLecturerModal(true);
+  }
 
   return (
     <AppShell>
@@ -109,11 +125,11 @@ export default function StudentActivity() {
           <thead>
             <tr>
               <th>No</th>
-              <th>Semester</th>
               <th>ID Course</th>
               <th>Name Course</th>
               <th>Lecturer</th>
               <th>Status</th>
+              <th>Module</th>
             </tr>
           </thead>
           <tbody>
@@ -127,28 +143,22 @@ export default function StudentActivity() {
               enrollments.map((e, idx) => (
                 <tr key={e.id}>
                   <td>{idx + 1}</td>
+                  <td>{e.course.id}</td>
+                  <td>{e.course.title}</td>
                   <td>
-                    <select
-                      value={e.semester || "ganjil"}
-                      onChange={(ev) =>
-                        handleSemesterChange(e.id, ev.target.value)
-                      }
-                      className="semester-select"
-                    >
-                      <option value="ganjil">Ganjil</option>
-                      <option value="genap">Genap</option>
-                    </select>
-                  </td>
-                  <td>{e.course?.id || "-"}</td>
-                  <td>{e.course?.title || "-"}</td>
-                  <td>
-                    {e.course?.lecturer ? (
+                    {e.course.lecturer ? (
                       <button
                         className="lecturer-link"
-                        onClick={() => {
-                          setSelectedLecturer(e.course.lecturer);
-                          setShowLecturerModal(true);
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "#2563eb",
+                          textDecoration: "underline",
+                          cursor: "pointer",
+                          padding: 0,
+                          font: "inherit",
                         }}
+                        onClick={() => handleLecturerClick(e.course.lecturer)}
                       >
                         {e.course.lecturer.name}
                       </button>
@@ -157,7 +167,48 @@ export default function StudentActivity() {
                     )}
                   </td>
                   <td>
-                    <span className="status-badge">{e.status || "Aktif"}</span>
+                    <span
+                      className="status-badge"
+                      style={{
+                        backgroundColor:
+                          !e.status ||
+                          e.status.toLowerCase() === "aktif" ||
+                          e.status.toLowerCase() === "active"
+                            ? "#10b981"
+                            : "#999",
+                        color: "white",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        display: "inline-block",
+                        fontSize: "12px",
+                      }}
+                    >
+                      {e.status || "Aktif"}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      style={{
+                        background: "#2563eb",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 6,
+                        padding: "6px 16px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        boxShadow: "0 2px 8px #2563eb22",
+                        transition: "background 0.2s",
+                      }}
+                      onClick={() => {
+                        const courseId = e.course?.id;
+                        if (courseId)
+                          router.push(
+                            `/dashboard/student/activity/${courseId}`,
+                          );
+                      }}
+                    >
+                      Module
+                    </button>
                   </td>
                 </tr>
               ))
@@ -188,19 +239,7 @@ export default function StudentActivity() {
                 ))}
               </select>
             </div>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: "block", marginBottom: 6 }}>
-                Semester
-              </label>
-              <select
-                value={selectedSemester}
-                onChange={(e) => setSelectedSemester(e.target.value)}
-                className="input"
-              >
-                <option value="ganjil">Ganjil</option>
-                <option value="genap">Genap</option>
-              </select>
-            </div>
+            {/* Semester select di modal add course dihapus */}
             <div
               style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}
             >

@@ -10,8 +10,9 @@ type LoginResponse = { access_token: string };
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("lecturer@example.com");
-  const [password, setPassword] = useState("password123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [showLogin, setShowLogin] = useState(true);
@@ -21,6 +22,7 @@ export default function LoginPage() {
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regRole, setRegRole] = useState("");
+  const [showRegPassword, setShowRegPassword] = useState(false);
 
   const backgroundImage = "url('/login-bg.png')"; // place your image at /public/login-bg.png
   const backgroundStyle: CSSProperties = {
@@ -58,9 +60,12 @@ export default function LoginPage() {
       router.replace("/dashboard");
     } catch (err: any) {
       const errorMsg = err?.message || "Login gagal";
-      if (
-        errorMsg.includes("not found") ||
-        errorMsg.includes("tidak ditemukan")
+      const normalized = errorMsg.toLowerCase();
+      if (normalized.includes("email atau password")) {
+        setError("Email atau password salah");
+      } else if (
+        normalized.includes("not found") ||
+        normalized.includes("tidak ditemukan")
       ) {
         setError("Akun tidak terdaftar. Silakan daftar terlebih dahulu.");
       } else {
@@ -70,6 +75,37 @@ export default function LoginPage() {
       setLoading(false);
     }
   }
+
+  const resetErrors = () => {
+    setError("");
+    setLoading(false);
+  };
+
+  const resetLoginForm = () => {
+    setEmail("");
+    setPassword("");
+    setShowPassword(false);
+    resetErrors();
+  };
+
+  const resetRegisterForm = () => {
+    setRegName("");
+    setRegEmail("");
+    setRegPassword("");
+    setRegRole("");
+    setShowRegPassword(false);
+    resetErrors();
+  };
+
+  const goToLogin = () => {
+    resetLoginForm();
+    setShowLogin(true);
+  };
+
+  const goToRegister = () => {
+    resetRegisterForm();
+    setShowLogin(false);
+  };
 
   if (!showLogin) {
     return (
@@ -102,7 +138,7 @@ export default function LoginPage() {
                   }),
                 });
                 alert("Registrasi berhasil! Silakan login.");
-                setShowLogin(true);
+                goToLogin();
                 setRegName("");
                 setRegEmail("");
                 setRegPassword("");
@@ -157,22 +193,46 @@ export default function LoginPage() {
 
             <label style={{ color: "#fff" }}>
               Password
-              <input
-                value={regPassword}
-                onChange={(e) => setRegPassword(e.target.value)}
-                type="password"
-                required
-                style={{
-                  width: "100%",
-                  padding: 10,
-                  marginTop: 6,
-                  boxSizing: "border-box",
-                  border: "none",
-                  borderRadius: 4,
-                  background: "#D2B48C",
-                  color: "#fff",
-                }}
-              />
+              <div style={{ position: "relative", marginTop: 6 }}>
+                <input
+                  value={regPassword}
+                  onChange={(e) => setRegPassword(e.target.value)}
+                  type={showRegPassword ? "text" : "password"}
+                  required
+                  style={{
+                    width: "100%",
+                    padding: 10,
+                    paddingRight: 40,
+                    boxSizing: "border-box",
+                    border: "none",
+                    borderRadius: 4,
+                    background: "#D2B48C",
+                    color: "#fff",
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowRegPassword(!showRegPassword)}
+                  style={{
+                    position: "absolute",
+                    right: 10,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 4,
+                  }}
+                >
+                  <img
+                    src={
+                      showRegPassword ? "/icons/eye.svg" : "/icons/eye-off.svg"
+                    }
+                    alt="Toggle password"
+                    style={{ width: 18, height: 18 }}
+                  />
+                </button>
+              </div>
             </label>
 
             <label style={{ color: "#fff" }}>
@@ -227,7 +287,7 @@ export default function LoginPage() {
 
           <div style={{ marginTop: 24, textAlign: "right" }}>
             <button
-              onClick={() => setShowLogin(true)}
+              onClick={goToLogin}
               style={{
                 background: "none",
                 border: "none",
@@ -250,27 +310,38 @@ export default function LoginPage() {
       <main style={cardStyle}>
         <h1
           style={{
-            fontSize: 30,
             fontWeight: 700,
             marginBottom: 24,
             color: "#164d8d",
           }}
         >
-          Login
+          <div style={{ fontSize: 18 }}>Welcome to</div>
+          <div style={{ fontSize: 48 }}>RevoEdu</div>
         </h1>
 
         <form onSubmit={onSubmit} style={{ display: "grid", gap: 10 }}>
-          <label style={{ color: "#fff" }}>
-            Email
+          <div style={{ position: "relative", marginTop: 6 }}>
+            <img
+              src="/icons/envelope.svg"
+              alt="Email"
+              style={{
+                position: "absolute",
+                left: 10,
+                top: "50%",
+                transform: "translateY(-50%)",
+                width: 18,
+                height: 18,
+              }}
+            />
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
+              placeholder="Email"
               required
               style={{
                 width: "100%",
-                padding: 10,
-                marginTop: 6,
+                padding: "10px 10px 10px 40px",
                 boxSizing: "border-box",
                 border: "none",
                 borderRadius: 4,
@@ -278,19 +349,31 @@ export default function LoginPage() {
                 color: "#fff",
               }}
             />
-          </label>
+          </div>
 
-          <label style={{ color: "#fff" }}>
-            Password
+          <div style={{ position: "relative", marginTop: 6 }}>
+            <img
+              src="/icons/lock.svg"
+              alt="Password"
+              style={{
+                position: "absolute",
+                left: 10,
+                top: "50%",
+                transform: "translateY(-50%)",
+                width: 18,
+                height: 18,
+                zIndex: 10,
+              }}
+            />
             <input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              type="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
               required
               style={{
                 width: "100%",
-                padding: 10,
-                marginTop: 6,
+                padding: "10px 40px 10px 40px",
                 boxSizing: "border-box",
                 border: "none",
                 borderRadius: 4,
@@ -298,7 +381,27 @@ export default function LoginPage() {
                 color: "#fff",
               }}
             />
-          </label>
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: "absolute",
+                right: 10,
+                top: "50%",
+                transform: "translateY(-50%)",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 4,
+              }}
+            >
+              <img
+                src={showPassword ? "/icons/eye.svg" : "/icons/eye-off.svg"}
+                alt="Toggle password"
+                style={{ width: 18, height: 18 }}
+              />
+            </button>
+          </div>
 
           {error && (
             <p style={{ color: "crimson", margin: "10px 0 0 0", fontSize: 14 }}>
@@ -334,7 +437,7 @@ export default function LoginPage() {
         >
           <p style={{ marginBottom: 12, color: "#fff" }}>Belum punya akun?</p>
           <button
-            onClick={() => setShowLogin(false)}
+            onClick={goToRegister}
             style={{
               width: "100%",
               padding: 12,

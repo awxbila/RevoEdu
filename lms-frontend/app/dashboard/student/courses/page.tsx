@@ -32,7 +32,7 @@ export default function StudentCourses() {
   const [search, setSearch] = useState("");
   const [showEnrollModal, setShowEnrollModal] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [selectedSemester, setSelectedSemester] = useState("ganjil");
+  // const [selectedSemester, setSelectedSemester] = useState("ganjil"); // dihapus
   const [enrollments, setEnrollments] = useState<any[]>([]);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function StudentCourses() {
         const enrollData = await apiFetch<any[]>(
           "/api/enrollments/me",
           {},
-          token
+          token,
         );
         if (mounted) setEnrollments(enrollData || []);
       } catch (err: any) {
@@ -68,8 +68,15 @@ export default function StudentCourses() {
           method: "POST",
           body: JSON.stringify({ courseId: String(courseId) }),
         },
-        token
+        token,
       );
+      // Refresh enrollments before navigating
+      const enrollData = await apiFetch<any[]>(
+        "/api/enrollments/me",
+        {},
+        token,
+      );
+      setEnrollments(enrollData || []);
       router.push("/dashboard/student/activity");
     } catch (err: any) {
       alert(err?.message || "Enroll gagal");
@@ -78,7 +85,7 @@ export default function StudentCourses() {
 
   function openEnrollModal(course: Course) {
     setSelectedCourse(course);
-    setSelectedSemester("ganjil");
+    // setSelectedSemester("ganjil"); // dihapus
     setShowEnrollModal(true);
   }
 
@@ -87,16 +94,10 @@ export default function StudentCourses() {
 
     // Check if course is already enrolled in the same semester
     const alreadyEnrolled = enrollments.some(
-      (e) =>
-        e.course?.id === selectedCourse.id && e.semester === selectedSemester
+      (e) => e.course?.id === selectedCourse.id,
     );
-
     if (alreadyEnrolled) {
-      alert(
-        `Course "${selectedCourse.title}" sudah terdaftar di semester ${
-          selectedSemester === "ganjil" ? "Ganjil" : "Genap"
-        }`
-      );
+      alert(`Course "${selectedCourse.title}" sudah terdaftar.`);
       return;
     }
 
@@ -109,8 +110,15 @@ export default function StudentCourses() {
             courseId: String(selectedCourse.id),
           }),
         },
-        token
+        token,
       );
+      // Refresh enrollments before navigating
+      const enrollData = await apiFetch<any[]>(
+        "/api/enrollments/me",
+        {},
+        token,
+      );
+      setEnrollments(enrollData || []);
       setShowEnrollModal(false);
       router.push("/dashboard/student/activity");
     } catch (err: any) {
@@ -242,21 +250,7 @@ export default function StudentCourses() {
                 {selectedCourse.id}
               </div>
             </div>
-            <div style={{ marginBottom: 16 }}>
-              <label
-                style={{ display: "block", marginBottom: 6, fontWeight: 600 }}
-              >
-                Semester
-              </label>
-              <select
-                value={selectedSemester}
-                onChange={(e) => setSelectedSemester(e.target.value)}
-                className="input"
-              >
-                <option value="ganjil">Ganjil</option>
-                <option value="genap">Genap</option>
-              </select>
-            </div>
+            {/* Semester select di modal enroll dihapus */}
             <div
               style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}
             >
