@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LMS Frontend (Next.js)
 
-## Getting Started
+> Learning Management System (LMS) Frontend built with Next.js, React, and TypeScript.
 
-First, run the development server:
+## Fitur Utama
+
+- Autentikasi (Login, Register) untuk dosen & mahasiswa
+- Dashboard dosen & mahasiswa
+- Manajemen course, module (materi PDF/video), dan tugas
+- Upload & preview materi (PDF/video) langsung di card module
+- Enroll mahasiswa ke course
+- Lihat daftar mahasiswa yang terdaftar di course
+- Integrasi penuh ke backend API (bukan mock/local API)
+
+## Struktur Project
+
+- `app/` — Routing Next.js (app router)
+- `components/` — Komponen UI & layout
+- `lib/` — Helper API, auth, JWT, dsb
+- `public/` — Asset statis (icon, dsb)
+
+## Setup & Menjalankan
+
+1. **Install dependencies**
+   ```bash
+   npm install
+   # atau
+   yarn install
+   ```
+2. **Buat file .env.local**
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8000/api
+   ```
+   (Ganti sesuai URL backend kamu)
+3. **Jalankan development server**
+   ```bash
+   npm run dev
+   ```
+   Buka [http://localhost:3000](http://localhost:3000)
+
+## Integrasi Backend
+
+- Semua data (auth, course, module, dsb) diambil dari backend API (bukan mock/local route)
+- File materi (PDF/video) diakses via URL: `http://[domain-backend]/uploads/modules/namafile.pdf`
+- Pastikan backend sudah expose folder uploads/ sebagai static
+
+## Build & Deploy
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js 16
+- React 19
+- TypeScript
+- TailwindCSS (jika diaktifkan)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Kontribusi
 
-## Learn More
+Pull request & issue sangat diterima!
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> Untuk detail API backend, cek dokumentasi backend masing-masing.
