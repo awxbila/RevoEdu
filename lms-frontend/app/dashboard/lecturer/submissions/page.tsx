@@ -12,25 +12,31 @@ export default function LecturerSubmissions() {
   const [submissions, setSubmissions] = useState<any[]>([]);
 
   useEffect(() => {
-    apiFetch<any[]>("/api/assignments", {}, token).then(setAssignments);
+    apiFetch<any[]>("/api/assignments", {}, token).then((asgs) => {
+      setAssignments(asgs);
+      // Fetch submissions untuk setiap assignment
+      Promise.all(
+        asgs.map((asg) =>
+          apiFetch<any[]>(`/api/assignments/${asg.id}/submissions`, {}, token)
+            .then((subs) => subs.map((s) => ({ ...s, assignmentId: asg.id })))
+            .catch(() => []),
+        ),
+      ).then((allSubs) => setSubmissions(allSubs.flat()));
+    });
     apiFetch<any[]>("/api/enrollments", {}, token).then(setEnrollments);
-    apiFetch<any[]>("/api/auth/users", {}, token).then(setUsers);
-    // Simulasi: submissions endpoint, ganti jika ada endpoint real
-    apiFetch<any[]>("/api/submissions", {}, token)
-      .then(setSubmissions)
-      .catch(() => setSubmissions([]));
+    // Tidak perlu fetch users, gunakan enrollments untuk info mahasiswa
   }, [token]);
 
   return (
     <AppShell>
       <h1>Assignment Submissions</h1>
       {assignments.map((asg) => {
-        const courseEnrolls = enrollments.filter(
-          (e) => e.courseId === asg.courseId,
-        );
-        const asgSubmissions = submissions.filter(
-          (s) => s.assignmentId === asg.id,
-        );
+        const courseEnrolls = Array.isArray(enrollments)
+          ? enrollments.filter((e) => e.courseId === asg.courseId)
+          : [];
+        const asgSubmissions = Array.isArray(submissions)
+          ? submissions.filter((s) => s.assignmentId === asg.id)
+          : [];
         return (
           <div
             key={asg.id}

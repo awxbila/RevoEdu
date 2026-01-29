@@ -8,6 +8,7 @@ import { getTokenClient } from "@/lib/auth";
 export default function LecturerAssignments() {
   const token = getTokenClient();
   const [assignments, setAssignments] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
   const [title, setTitle] = useState("");
   const [courseId, setCourseId] = useState<number | "">("");
   const [dueDate, setDueDate] = useState<string>("");
@@ -20,6 +21,7 @@ export default function LecturerAssignments() {
 
   useEffect(() => {
     load();
+    apiFetch<any[]>("/api/courses/my-courses", {}, token).then(setCourses);
   }, []);
 
   async function create(e: React.FormEvent) {
@@ -28,7 +30,12 @@ export default function LecturerAssignments() {
       "/api/assignments",
       {
         method: "POST",
-        body: JSON.stringify({ title, courseId, dueDate, brief }),
+        body: JSON.stringify({
+          title,
+          courseId,
+          dueDate,
+          description: brief || "",
+        }),
       },
       token,
     );
@@ -57,15 +64,20 @@ export default function LecturerAssignments() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Course ID</label>
-            <input
+            <label className="form-label">Course</label>
+            <select
               className="form-input"
-              type="number"
-              placeholder="Contoh: 101"
               value={courseId}
               onChange={(e) => setCourseId(Number(e.target.value) || "")}
               required
-            />
+            >
+              <option value="">Pilih Course</option>
+              {courses.map((c: any) => (
+                <option key={c.id} value={c.id}>
+                  {c.title}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">

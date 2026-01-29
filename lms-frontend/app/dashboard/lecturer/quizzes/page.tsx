@@ -26,8 +26,21 @@ export default function LecturerQuizzesPage() {
   async function fetchQuizzes() {
     try {
       const token = getTokenClient();
-      const data = await apiFetch<Quiz[]>("/api/quizzes/lecturer", {}, token);
-      setQuizzes(data);
+      // Ambil semua course yang dipegang dosen
+      const courses = await apiFetch<any[]>(
+        "/api/courses/my-courses",
+        {},
+        token,
+      );
+      // Fetch semua quiz dari setiap course
+      const allQuizzes = await Promise.all(
+        courses.map((c) =>
+          apiFetch<Quiz[]>(`/api/quizzes/course/${c.id}`, {}, token).catch(
+            () => [],
+          ),
+        ),
+      );
+      setQuizzes(allQuizzes.flat());
     } catch (err) {
       console.error("Failed to fetch quizzes:", err);
     } finally {

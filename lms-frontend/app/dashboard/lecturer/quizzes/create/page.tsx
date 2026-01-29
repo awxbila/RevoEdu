@@ -12,7 +12,7 @@ type Course = {
 type Question = {
   question: string;
   options: string[];
-  correctAnswer: number; // index of correct option (0-3)
+  correctAnswer: number; // 0, 1, 2, or 3 (index of correct option)
 };
 
 export default function CreateQuizPage() {
@@ -31,7 +31,18 @@ export default function CreateQuizPage() {
 
   async function fetchCourses() {
     try {
-      const data = await apiFetch<Course[]>("/api/courses");
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/courses/my-courses`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
       setCourses(data);
     } catch (err) {
       console.error("Failed to fetch courses:", err);
@@ -54,7 +65,7 @@ export default function CreateQuizPage() {
     if (field === "question") {
       updated[index].question = value;
     } else if (field === "correctAnswer") {
-      updated[index].correctAnswer = parseInt(value);
+      updated[index].correctAnswer = value; // value should be a number (0-3)
     }
     setQuestions(updated);
   }
@@ -88,14 +99,29 @@ export default function CreateQuizPage() {
 
     setLoading(true);
     try {
-      await apiFetch("/api/quizzes", {
-        method: "POST",
-        body: JSON.stringify({
-          title,
-          courseId,
-          questions,
-        }),
-      });
+      const token = localStorage.getItem("token");
+      // Transform questions agar sesuai backend
+      const transformedQuestions = questions.map((q, idx) => ({
+        optionA: q.options[0],
+        optionB: q.options[1],
+        optionC: q.options[2],
+        optionD: q.options[3],
+        question: q.question,
+        correctAnswer: ["A", "B", "C", "D"][q.correctAnswer],
+        order: idx + 1,
+      }));
+      await apiFetch(
+        "/api/quizzes",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            title,
+            courseId: parseInt(courseId, 10),
+            questions: transformedQuestions,
+          }),
+        },
+        token,
+      );
       alert("Quiz berhasil dibuat!");
       router.push("/dashboard/lecturer/quizzes");
     } catch (err: any) {
@@ -209,7 +235,7 @@ export default function CreateQuizPage() {
                             updateOption(qIdx, optIdx, e.target.value)
                           }
                           placeholder={`Option ${String.fromCharCode(
-                            65 + optIdx
+                            65 + optIdx,
                           )}`}
                           required
                           style={{ flex: 1 }}
