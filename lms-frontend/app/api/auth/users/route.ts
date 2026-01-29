@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import users from "./users.json";
+import users from "../users.json";
 
 export async function GET(request: NextRequest) {
   // Get token from request header
