@@ -4,27 +4,31 @@
     "name": "Dr. Budi Santoso",
     "email": "budi@example.com",
     "password": "password123",
-    "role": "LECTURER"
+    "role": "LECTURER",
+    "phone": "081234567890"
   },
   {
     "id": 2,
     "name": "Prof. Adi Wijaya",
     "email": "adi@example.com",
     "password": "password123",
-    "role": "LECTURER"
+    "role": "LECTURER",
+    "phone": "081234567891"
   },
   {
     "id": 3,
     "name": "Student One",
     "email": "student@example.com",
     "password": "password123",
-    "role": "STUDENT"
+    "role": "STUDENT",
+    "phone": "081234567892"
   },
   {
     "id": 4,
     "name": "bilala",
     "email": "bilala@gmail.com",
     "password": "bilalacantik",
-    "role": "STUDENT"
+    "role": "STUDENT",
+    "phone": "081234567893"
   }
 ]

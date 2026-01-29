@@ -7,6 +7,7 @@ export type MockUser = {
   email: string;
   password: string;
   role: string;
+  phone?: string;
 };
 
 const USERS_FILE = path.join(process.cwd(), "app/api/auth/users.json");
@@ -29,6 +30,7 @@ async function loadUsers(): Promise<MockUser[]> {
         email: "budi@example.com",
         password: "password123",
         role: "LECTURER",
+        phone: "081234567890",
       },
       {
         id: 2,
@@ -36,6 +38,7 @@ async function loadUsers(): Promise<MockUser[]> {
         email: "adi@example.com",
         password: "password123",
         role: "LECTURER",
+        phone: "081234567891",
       },
       {
         id: 3,
@@ -43,6 +46,7 @@ async function loadUsers(): Promise<MockUser[]> {
         email: "student@example.com",
         password: "password123",
         role: "STUDENT",
+        phone: "081234567892",
       },
     ];
     return cachedUsers;
@@ -63,7 +67,7 @@ export async function findUserByEmail(email: string) {
   const normalized = email.trim().toLowerCase();
   const found = users.find((u) => u.email === normalized);
   console.log(
-    `[DEBUG] findUserByEmail("${normalized}"): ${found ? "found" : "not found"}`
+    `[DEBUG] findUserByEmail("${normalized}"): ${found ? "found" : "not found"}`,
   );
   return found;
 }
@@ -79,7 +83,7 @@ export async function addUser(data: Omit<MockUser, "id">) {
   users.push(newUser);
   await saveUsers(users);
   console.log(
-    `[DEBUG] addUser: created user #${nextId} with email ${newUser.email}`
+    `[DEBUG] addUser: created user #${nextId} with email ${newUser.email}`,
   );
   console.log(`[DEBUG] Total users now: ${users.length}`);
   return newUser;

@@ -117,7 +117,7 @@ export default function LecturerAssignments() {
             <tr>
               <th>No</th>
               <th>Judul</th>
-              <th>Kode</th>
+              <th>Course</th>
               <th>Deadline</th>
               <th>Brief</th>
             </tr>
@@ -142,7 +142,10 @@ export default function LecturerAssignments() {
                   >
                     <td>{idx + 1}</td>
                     <td>{a.title}</td>
-                    <td>{a.code || "-"}</td>
+                    <td>
+                      {courses.find((c: any) => c.id === a.courseId)?.title ||
+                        "-"}
+                    </td>
                     <td>
                       {a.dueDate
                         ? new Date(a.dueDate).toLocaleDateString("id-ID")
@@ -150,11 +153,21 @@ export default function LecturerAssignments() {
                     </td>
                     <td>
                       {a.brief ? (
-                        <span style={{ fontSize: 12, color: "#666" }}>
-                          {a.brief.length > 50
-                            ? a.brief.substring(0, 50) + "..."
-                            : a.brief}
-                        </span>
+                        <button
+                          type="button"
+                          className="btn-brief"
+                          style={{
+                            fontSize: 12,
+                            color: "#2563eb",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            textDecoration: "underline",
+                          }}
+                          onClick={() => alert(a.brief)}
+                        >
+                          Lihat Brief
+                        </button>
                       ) : (
                         "-"
                       )}

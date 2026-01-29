@@ -272,11 +272,12 @@ export default function StudentActivity() {
               <p>
                 <strong>Email:</strong> {selectedLecturer.email}
               </p>
-              {selectedLecturer.phone && (
-                <p>
-                  <strong>Phone:</strong> {selectedLecturer.phone}
-                </p>
-              )}
+              <p>
+                <strong>Phone:</strong>{" "}
+                {selectedLecturer.phone || (
+                  <span style={{ color: "#aaa" }}>Belum diisi</span>
+                )}
+              </p>
             </div>
             <div style={{ textAlign: "right", marginTop: 20 }}>
               <button

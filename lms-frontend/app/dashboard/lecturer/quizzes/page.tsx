@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getStudentSubmitCount } from "./studentSubmitCount";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import { getTokenClient } from "@/lib/auth";
+const QuizSubmissionsModal = dynamic(() => import("./QuizSubmissionsModal"), {
+  ssr: false,
+});
 
 type Quiz = {
   id: string;
@@ -17,6 +22,10 @@ type Quiz = {
 export default function LecturerQuizzesPage() {
   const router = useRouter();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [submitCounts, setSubmitCounts] = useState<{
+    [quizId: string]: number;
+  }>({});
+  const [modalQuizId, setModalQuizId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,7 +49,25 @@ export default function LecturerQuizzesPage() {
           ),
         ),
       );
-      setQuizzes(allQuizzes.flat());
+      // Map courseName ke setiap quiz
+      const quizzesWithCourseName = allQuizzes.flat().map((quiz) => {
+        const course = courses.find((c: any) => c.id == quiz.courseId);
+        return { ...quiz, courseName: course ? course.title : quiz.courseId };
+      });
+      setQuizzes(quizzesWithCourseName);
+
+      // Fetch jumlah student submit untuk setiap quiz
+      const submitCountsObj: { [quizId: string]: number } = {};
+      await Promise.all(
+        quizzesWithCourseName.map(async (quiz) => {
+          try {
+            submitCountsObj[quiz.id] = await getStudentSubmitCount(quiz.id);
+          } catch {
+            submitCountsObj[quiz.id] = 0;
+          }
+        }),
+      );
+      setSubmitCounts(submitCountsObj);
     } catch (err) {
       console.error("Failed to fetch quizzes:", err);
     } finally {
@@ -94,7 +121,7 @@ export default function LecturerQuizzesPage() {
                 <th>No</th>
                 <th>Quiz Title</th>
                 <th>Course</th>
-                <th>Questions</th>
+                <th>Student Submit</th>
                 <th>Created At</th>
                 <th>Actions</th>
               </tr>
@@ -104,8 +131,25 @@ export default function LecturerQuizzesPage() {
                 <tr key={quiz.id}>
                   <td>{idx + 1}</td>
                   <td>{quiz.title}</td>
-                  <td>{quiz.courseName || quiz.courseId}</td>
-                  <td>{quiz.questionCount || 0}</td>
+                  <td>{quiz.courseName}</td>
+                  <td>
+                    <button
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#2563eb",
+                        cursor: "pointer",
+                        fontWeight: 600,
+                        fontSize: 15,
+                        textDecoration: "underline",
+                      }}
+                      onClick={() => setModalQuizId(quiz.id)}
+                    >
+                      {typeof submitCounts[quiz.id] === "number"
+                        ? submitCounts[quiz.id]
+                        : 0}
+                    </button>
+                  </td>
                   <td>{quiz.createdAt ? quiz.createdAt.slice(0, 10) : "-"}</td>
                   <td>
                     <button
@@ -127,6 +171,13 @@ export default function LecturerQuizzesPage() {
               ))}
             </tbody>
           </table>
+          {modalQuizId && (
+            <QuizSubmissionsModal
+              quizId={modalQuizId}
+              open={!!modalQuizId}
+              onClose={() => setModalQuizId(null)}
+            />
+          )}
         </div>
       )}
     </div>

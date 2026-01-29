@@ -4,6 +4,7 @@ export type MockUser = {
   email: string;
   password: string;
   role: string;
+  phone?: string;
 };
 
 const users: MockUser[] = [
@@ -13,6 +14,7 @@ const users: MockUser[] = [
     email: "budi@example.com",
     password: "password123",
     role: "LECTURER",
+    phone: "081234567890",
   },
   {
     id: 2,
@@ -20,6 +22,7 @@ const users: MockUser[] = [
     email: "adi@example.com",
     password: "password123",
     role: "LECTURER",
+    phone: "081234567891",
   },
   {
     id: 3,
@@ -27,6 +30,7 @@ const users: MockUser[] = [
     email: "student@example.com",
     password: "password123",
     role: "STUDENT",
+    phone: "081234567892",
   },
 ];
 
@@ -34,7 +38,7 @@ export function findUserByEmail(email: string) {
   const normalized = email.trim().toLowerCase();
   const found = users.find((u) => u.email === normalized);
   console.log(
-    `[DEBUG] findUserByEmail("${normalized}"): ${found ? "found" : "not found"}`
+    `[DEBUG] findUserByEmail("${normalized}"): ${found ? "found" : "not found"}`,
   );
   return found;
 }
@@ -48,7 +52,7 @@ export function addUser(data: Omit<MockUser, "id">) {
   };
   users.push(newUser);
   console.log(
-    `[DEBUG] addUser: created user #${nextId} with email ${newUser.email}`
+    `[DEBUG] addUser: created user #${nextId} with email ${newUser.email}`,
   );
   console.log(`[DEBUG] Total users now: ${users.length}`);
   return newUser;

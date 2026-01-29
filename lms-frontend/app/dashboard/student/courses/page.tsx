@@ -203,6 +203,18 @@ export default function StudentCourses() {
                       <div className="course-lecturer">
                         Lecturer: {lecturer || "Belum ditetapkan"}
                       </div>
+                      {course.description && (
+                        <div
+                          className="course-desc"
+                          style={{
+                            color: "#666",
+                            fontSize: 14,
+                            margin: "8px 0 10px 0",
+                          }}
+                        >
+                          {course.description}
+                        </div>
+                      )}
                       <button
                         className="course-enroll-btn"
                         onClick={() => openEnrollModal(course)}

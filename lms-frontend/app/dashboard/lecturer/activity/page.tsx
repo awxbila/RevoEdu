@@ -29,6 +29,7 @@ interface Student {
   id: number;
   name: string;
   email: string;
+  phone?: string;
 }
 
 interface Module {
@@ -285,6 +286,12 @@ export default function LecturerActivity() {
                     <div style={{ color: "#666", fontSize: 14 }}>
                       {student.email}
                     </div>
+                    <div style={{ color: "#666", fontSize: 14 }}>
+                      <b>Phone:</b>{" "}
+                      {student.phone || (
+                        <span style={{ color: "#aaa" }}>Belum diisi</span>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -328,43 +335,58 @@ export default function LecturerActivity() {
                     )}
 
                     {/* Materi preview langsung di card */}
-                    {mod.type === "pdf" ? (
-                      <iframe
-                        src={mod.fileUrl}
-                        style={{
-                          width: "100%",
-                          minHeight: 320,
-                          border: "1px solid #ccc",
-                          borderRadius: 6,
-                        }}
-                        title={mod.title}
-                        allow="autoplay"
-                      />
-                    ) : mod.type === "video" ? (
-                      <video
-                        src={mod.fileUrl}
-                        controls
-                        style={{
-                          width: "100%",
-                          maxWidth: 480,
-                          borderRadius: 6,
-                          background: "#000",
-                        }}
-                      />
-                    ) : mod.type === "ppt" ? (
-                      <a
-                        href={mod.fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          color: "#0369a1",
-                          textDecoration: "underline",
-                          fontWeight: 500,
-                        }}
-                      >
-                        PPT Materi
-                      </a>
-                    ) : null}
+                    {(() => {
+                      // Only use mod.type (original logic)
+                      const type = (mod.type || "").toLowerCase();
+                      let fileUrl = mod.fileUrl;
+                      if (fileUrl && !fileUrl.startsWith("http")) {
+                        fileUrl = `${process.env.NEXT_PUBLIC_API_URL}${fileUrl}`;
+                      }
+                      if (type === "pdf") {
+                        return (
+                          <iframe
+                            src={fileUrl}
+                            style={{
+                              width: "100%",
+                              minHeight: 320,
+                              border: "1px solid #ccc",
+                              borderRadius: 6,
+                            }}
+                            title={mod.title}
+                            allow="autoplay"
+                          />
+                        );
+                      } else if (type === "video") {
+                        return (
+                          <video
+                            src={fileUrl}
+                            controls
+                            style={{
+                              width: "100%",
+                              maxWidth: 480,
+                              borderRadius: 6,
+                              background: "#000",
+                            }}
+                          />
+                        );
+                      } else if (type === "ppt") {
+                        return (
+                          <a
+                            href={fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              color: "#0369a1",
+                              textDecoration: "underline",
+                              fontWeight: 500,
+                            }}
+                          >
+                            PPT Materi
+                          </a>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
                 ))}
               </div>

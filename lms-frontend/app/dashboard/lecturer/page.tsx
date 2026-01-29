@@ -8,6 +8,7 @@ import { getTokenClient } from "@/lib/auth";
 export default function LecturerDashboard() {
   const [courses, setCourses] = useState<any[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
+  const [enrollments, setEnrollments] = useState<any[]>([]);
   const token = getTokenClient();
 
   useEffect(() => {
@@ -17,6 +18,9 @@ export default function LecturerDashboard() {
     apiFetch<any[]>("/api/assignments", {}, token)
       .then(setAssignments)
       .catch(() => {});
+    apiFetch<any[]>("/api/enrollments", {}, token)
+      .then((data) => setEnrollments(Array.isArray(data) ? data : []))
+      .catch(() => setEnrollments([]));
   }, [token]);
 
   return (
@@ -30,9 +34,19 @@ export default function LecturerDashboard() {
 
           <div className="h2">Courses yang dipegang</div>
           <ul style={{ margin: 0, paddingLeft: 18 }}>
-            {courses.map((c) => (
-              <li key={c.id}>{c.title}</li>
-            ))}
+            {courses.map((c) => {
+              const totalEnroll = enrollments.filter(
+                (e) => e.courseId === c.id,
+              ).length;
+              return (
+                <li key={c.id}>
+                  {c.title}
+                  <span style={{ color: "#888", marginLeft: 8, fontSize: 13 }}>
+                    ({totalEnroll} mahasiswa)
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </section>
 
